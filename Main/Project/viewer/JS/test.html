@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<style>
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+.y.label,
+.x.label {
+    stroke: red;
+    stroke-width: 1;    
+    font-size:
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+</style>
+<head>
+<script type="text/JavaScript">
+<!--
+function timedRefresh(timeoutPeriod) {
+  //console.log("reloaded");
+	//setTimeout(loadData,timeoutPeriod);
+}
+//   -->
+</script>
+</head>
+<body onload="JavaScript:timedRefresh(100);">
+<script src="http://localhost:8080/d3.v3.js"></script>
+<script>
+
+var yscale = 160000;
+
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 1800 - margin.left - margin.right,
+    height = 900 - margin.top - margin.bottom;
+
+var x = d3.scale.linear().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(20);
+    
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
+    //.attr("transform", "translate(0,30)");
+
+var valueline = d3.svg.line()
+    .x(function(d) { return x(d.b); })
+    .y(function(d) { return y(d.SideLength); });
+    
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");   
+        
+//console.log(svg);
+function loadData(){
+      d3.csv("data/data2.csv", function(error, data) { 
+        data.forEach(function(d) {
+          //d.date = parseDate(d.date);
+          //console.log(d)
+          //d.close = +d.close;
+        });
+
+      // Scale the range of the data
+      x.domain(d3.extent(data, function(d) { return d.b; }));
+      y.domain([-1*yscale,0]);
+
+      //svg.remove("path");
+      svg.select("path")      // Add the valueline path.
+          .attr("d", valueline(data));
+
+      svg.append("g")         // Add the X Axis
+          .attr("class", "x axis")
+          .attr("width",1440)
+          .attr("height",30)          
+          //.attr("transform", "translate(0," + -height/2 + ")")
+          .call(xAxis);
+
+        // Draw X-axis grid lines
+      svg.selectAll("line.x")
+          .data(x.ticks(20))
+          .enter().append("line")
+          .attr("class", "x")
+          .attr("x1", x)
+          .attr("x2", x)
+          .attr("y1", 0)
+          .attr("y2", height)
+          .style("stroke", "#ccc");          
+          
+      svg.selectAll("line.y")
+          .data(y.ticks(1))
+          .enter().append("line")
+          .attr("class", "y")
+          .attr("x1", 0)
+          .attr("x2", width)
+          .attr("y1", y)
+          .attr("y2", y)
+          .style("stroke", "#00f");
+          
+      svg.append("g")         // Add the Y Axis
+          .attr("class", "y axis")
+          .call(yAxis);
+          
+      svg.append("text")
+          .attr("class", "x label")
+          .attr("text-anchor", "end")
+          .attr("x", width)
+          .attr("y", 30)
+          .text("B\' scale factor");          
+
+      svg.append("text")
+          .attr("class", "y label")
+          .attr("text-anchor", "end")
+          .attr("y", height-50)
+          .attr("x", 80)          
+          .attr("dy", ".75em")
+          .text("SideLength(AC,BD)");
+     // console.log("data loaded");
+
+  });
+}
+//loadData();
+var interv = setInterval(loadData, 100);
+//var interv = setInterval(function(){console.log("here");}, 100);
+
+</script>
