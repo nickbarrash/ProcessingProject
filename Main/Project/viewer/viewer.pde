@@ -11,13 +11,14 @@ int height=800, width=800;
 int ERROR_MODE = 1;
 
 Boolean showHelpText = false,
-        showGraph    = true,
-        showGraph2   = true,
+        showGraph    = false,
+        showGraph2   = false,
         showValueText = true,
         showDrawing = true,
         showRect     = true, 
         showPicture = false,
-        showGuess = true;
+        showGuess = false;
+        showCrossMethod = true;
         
 Boolean moveBP = false;        
         
@@ -48,7 +49,7 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
 
   
   //focal point and a point on the image plane
-  pt f = P(0,0,focalLen);  pt img = P();
+  pt f = P(0,0,focalLen);  pt img = P(); pt Orig = P();
   
   //rectangle intersections with image plane
   pt Ai = P(), Bi = P(), Ci = P(), Di = P();
@@ -58,6 +59,9 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
 
   // uses above rectangle definition to define real 3d rectangle coordinates
   pt Ar = P(), Br = P(), Cr = P(), Dr = P();
+  
+  // normal plane vector
+  vec planeNorm = V();
   
   // A' B' C' D' (calculated rectangle point)   
   pt Ap = P(), Bp = P(), Cp = P(), Dp = P();
@@ -122,7 +126,7 @@ void setup() {
 
   // -------------------------------------------------------------------------------
   // CALCULAGE INITIAL VALUES
-  calcArs();
+  calcVals();
   calcIs();
   calcPPrimes(1.0);
 }
@@ -163,7 +167,7 @@ void draw() {
  
   // --------------------------------------------------------- DRAW 3D ---------------------------------------------------
   // draw image plane rectangle
-  fill(black, 80); stroke(black); drawRectangle(P(-2000,-2000,0),P(-2000,2000,0),P(2000,-2000,0),P(2000,2000,0));  
+  //fill(black, 80); stroke(black); drawRectangle(P(-2000,-2000,0),P(-2000,2000,0),P(2000,-2000,0),P(2000,2000,0));  
   
   if(showDrawing){
     // draw real 3D rectangle
@@ -174,12 +178,19 @@ void draw() {
     fill(dgreen); stroke(dgreen);   show(f, Cr); show(f, Ci); show(f, Cp); show(Cr, 10); show(Cp, "C'", V(10,10,0));
     fill(dyellow); stroke(dyellow); show(f, Dr); show(f, Di); show(f, Dp); show(Dp, 10); show(Dp, "D'", V(10,10,0));       
     // draw actual rectangle points
-    fill(magenta); stroke(magenta); show(Ar, 10); show(Ar, "A", V(-30,-15,0)); show(Br, 10); show(Br, "B", V(15,-15,0));  show(Cr, 10); show(Cr, "C", V(-30,15,0)); show(Dr, 10); show(Dr, "D", V(15,15,0));         
+   // fill(magenta); stroke(magenta); show(Ar, 10); show(Ar, "A", V(-30,-15,0)); show(Br, 10); show(Br, "B", V(15,-15,0));  show(Cr, 10); show(Cr, "C", V(-30,15,0)); show(Dr, 10); show(Dr, "D", V(15,15,0));         
     // draw rectangle corner projections on image plane 
     fill(ddmagenta); stroke(ddmagenta); show(Ai, 10); show(Bi, 10); show(Ci, 10); show(Di, 10);   
     // draw guess rectangle for real rectangle
-    fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
+   // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
   }
+   
+  if(showCrossMethod){
+    // draw plane norm
+    fill(dyellow); stroke(dyellow);
+    show(Orig, P(Orig, planeNorm));
+    show(P(Orig, planeNorm), 15);
+  } 
    
   // handles guessing and dragging guess rectangles
   if(keyPressed){
@@ -191,7 +202,7 @@ void draw() {
     if(key=='6') {printRectCoords();}    
     if(key=='m'){ bpP+=(float)(mouseX-pmouseX)/ (float)width; calcPPrimes(bpP); }
     if(key=='n'){ bgP+=(float)(mouseX-pmouseX)/ (float)width; calcGPrimes(bgP); }   
-    if(key=='t'){ trapScale +=(float)(mouseX-pmouseX)/ (float)width; calcArs(); }       
+    if(key=='t'){ trapScale +=(float)(mouseX-pmouseX)/ (float)width; calcVals(); }       
   }   
   
   if(showGuess){
@@ -233,7 +244,8 @@ void draw() {
   "\nactual b: " + n(V(f,Br))/n(V(f,Bi)) + 
   "\nsample search b: " + minB + 
   "\ntrapezoid scale: " + trapScale +   
-  "\n A-red, B-blue, C-green, D-Yellow");      
+  "\n A-red, B-blue, C-green, D-Yellow" + 
+  "\n Norm Angle Error: " + calcNewMethodError());      
   }
   
   // DRAW GRAPH
@@ -304,10 +316,10 @@ void keyPressed() {
   if(key=='w') {}
   if(key=='y') {}
   
-  if(key=='v') {moveVecJxz(); calcArs();}  // drag real rectangle vertex
-  if(key=='c') {moveVecJxy(); calcArs();}  // drag real rectangle vertex
-  if(key=='x') {moveVecIxz(); calcArs();} // drag real rectangle vertex
-  if(key=='z') {moveVecIxy(); calcArs();} // drag real rectangle vertex
+  if(key=='v') {moveVecJxz(); calcVals();}  // drag real rectangle vertex
+  if(key=='c') {moveVecJxy(); calcVals();}  // drag real rectangle vertex
+  if(key=='x') {moveVecIxz(); calcVals();} // drag real rectangle vertex
+  if(key=='z') {moveVecIxy(); calcVals();} // drag real rectangle vertex
    
   if(key=='A') {}
   if(key=='B') {}

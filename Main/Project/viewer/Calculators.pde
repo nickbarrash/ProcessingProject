@@ -40,6 +40,38 @@ vec helpIs(pt Xr){
   return V(t, dir);
 }
 
+void calcVals(){
+  calcArs();
+  planeNorm = getNormalizedRectangleNorm(V(f, Ai), V(f, Bi), V(f, Ci), V(f, Di));
+}
+
+//=======================================================
+
+vec getRectangleNorm(vec PA, vec PB, vec PC, vec PD){
+  vec U = U(N(PA, PC));
+  vec V = U(N(PA, PB));
+  vec W = U(N(PB, PD));
+  vec UW = N(U,W);
+  vec UWV = N(UW, V);
+  vec N = N(UWV, UW);
+  return N;
+}
+
+vec getNormalizedRectangleNorm(vec PA, vec PB, vec PC, vec PD){
+  vec tmp1 = getRectangleNorm(PA, PB, PC, PD);
+  tmp1.str();
+  vec tmp = V(200, U(tmp1));
+  tmp.str();
+  return tmp;
+}
+
+float calcNewMethodError(){
+  return angle(U(planeNorm), V(N(Ix, Jx))) * 180.0 / PI;
+}
+
+//=======================================================
+
+
 /*
  * calculate the error for the cyan rectangle
  */
