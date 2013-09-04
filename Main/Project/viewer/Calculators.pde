@@ -43,6 +43,7 @@ vec helpIs(pt Xr){
 void calcVals(){
   calcArs();
   planeNorm = getNormalizedRectangleNorm(V(f, Ai), V(f, Bi), V(f, Ci), V(f, Di));
+  calcPlaneIntersections();
 }
 
 //=======================================================
@@ -70,6 +71,21 @@ float calcNewMethodError(){
  // System.out.print("guess: ");   U(planeNorm).str();
  // System.out.print("exact: "); U(V(N(Ix, Jx))).str();
   return angle(U(planeNorm), U(V(N(Ix, Jx)))) * 180.0 / PI;
+}
+
+void calcPlaneIntersections(){
+  vec N = U(planeNorm);
+  vec A = V(f,Ai);
+  vec B = V(f,Bi);
+  vec C = V(f,Ci);
+  vec D = V(f,Di);
+  Ap = Ai;
+  float Bs = d(A,N)/d(B,N);
+  Bp = P(f, V(Bs, B));
+  float Cs = d(A,N)/d(C,N);
+  Cp = P(f, V(Cs, C));
+  float Ds = d(A,N)/d(D,N);
+  Dp = P(f, V(Ds, D));
 }
 
 //=======================================================

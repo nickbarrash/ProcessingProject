@@ -18,7 +18,8 @@ Boolean showHelpText = false,
         showRect     = true, 
         showPicture = false,
         showGuess = false,
-        showCrossMethod = true;
+        showCrossMethod = true,
+        showImagePlane = false;
         
 Boolean moveBP = false;        
         
@@ -126,9 +127,9 @@ void setup() {
 
   // -------------------------------------------------------------------------------
   // CALCULAGE INITIAL VALUES
-  calcVals();
   calcIs();
   calcPPrimes(1.0);
+  calcVals();
 }
   
   
@@ -167,7 +168,9 @@ void draw() {
  
   // --------------------------------------------------------- DRAW 3D ---------------------------------------------------
   // draw image plane rectangle
-  //fill(black, 80); stroke(black); drawRectangle(P(-2000,-2000,0),P(-2000,2000,0),P(2000,-2000,0),P(2000,2000,0));  
+  if(showImagePlane){
+    fill(black, 80); stroke(black); drawRectangle(P(-2000,-2000,0),P(-2000,2000,0),P(2000,-2000,0),P(2000,2000,0));  
+  }  
   
   if(showDrawing){
     // draw real 3D rectangle
@@ -189,11 +192,19 @@ void draw() {
   if(showCrossMethod){
     // draw plane norm
     fill(dyellow); stroke(dyellow);
-    show(Orig, P(Orig, planeNorm));
-    show(P(Orig, planeNorm), 5);
+    show(Ax, P(Ax, planeNorm));
+    show(P(Ax, planeNorm), 5);
     fill(dred); stroke(dred);
-    show(Orig, P(Orig,  V(150,U(V(N(Ix, Jx))))));
-    show(P(Orig,  V(150,U(V(N(Ix, Jx))))), 5);
+    show(Ax, P(Ax,  V(150,U(V(N(Ix, Jx))))));
+    show(P(Ax,  V(150,U(V(N(Ix, Jx))))), 5);
+    
+    // draw prime points
+    fill(magenta); stroke(magenta);
+    show(Ap, 15); show(Bp, 15); show(Cp, 15); show(Dp, 15);
+    fill(dred); stroke(dred); show(f, Ap);
+    fill(dblue); stroke(dblue); show(f, Bp);
+    fill(dgreen); stroke(dgreen); show(f, Cp);
+    fill(dyellow); stroke(dyellow); show(f, Dp);      
   } 
    
   // handles guessing and dragging guess rectangles
@@ -266,6 +277,7 @@ void draw() {
 Boolean pressed=false, released = true;
 pt2d curMouse = new pt2d(mouseX,mouseY);
 vec tmpVec = V(); // vector used to keep track of how far the mouse has dragged the real rectange points when it's being edited
+pt tmpA = P();
 boolean changeVec = false; // change vector is being drawn
 float bptmp = bpP;
 boolean pre = false;
@@ -292,9 +304,7 @@ void keyReleased() {
    }
 
 void keyPressed() {
-  if(key=='a') {}
   if(key=='b') {}
-  if(key=='d') {printGridError(5,5,1,1);} 
   if(key=='e') {writeExactCheckersError(5,5,1,1);}
   if(key=='f') {showValueText = !showValueText;}
   if(key=='g') {showGraph = !showGraph;}
@@ -309,11 +319,14 @@ void keyPressed() {
   if(key=='p') {}
   if(key=='q') {}
   if(key=='r') {writePerturbError(5, 5, 1, 1, 100, 5);}
-  if(key=='s') {}
   if(key=='t') {}//trapezoid change 
   if(key=='u') {bpP = minB;}  // snap guess rectangle to "best" value
   if(key=='w') {}
   if(key=='y') {}
+  
+  if(key=='a') {moveAX(); calcVals();}
+  if(key=='s') {moveAY(); calcVals();}
+  if(key=='d') {moveAZ(); calcVals();} 
   
   if(key=='v') {moveVecJxz(); calcVals();}  // drag real rectangle vertex
   if(key=='c') {moveVecJxy(); calcVals();}  // drag real rectangle vertex
@@ -328,7 +341,7 @@ void keyPressed() {
   if(key=='F') {}
   if(key=='G') {showGuess = !showGuess;}
   if(key=='H') {}
-  if(key=='I') {}
+  if(key=='I') {showImagePlane = !showImagePlane;}
   if(key=='J') {}
   if(key=='K') {}
   if(key=='L') {}
@@ -417,6 +430,20 @@ void moveVecJxz(){
   if(!changeVec){changeVec = true; tmpVec = Jx; curMouse = new pt2d(mouseX,mouseY);}
   Jx = A(tmpVec, V(mouseX-curMouse.x, 0,mouseY-curMouse.y));  Ix = normalizeVec(Jx, Ix);
 }
+
+void moveAX(){
+  if(!changeVec){changeVec = true; tmpA = Ax;  curMouse = new pt2d(mouseX,mouseY);}
+  Ax = P(tmpA, V(mouseX-curMouse.x, 0, 0));
+}
+void moveAY(){
+  if(!changeVec){changeVec = true; tmpA = Ax;  curMouse = new pt2d(mouseX,mouseY);}
+  Ax = P(tmpA, V(0, mouseY-curMouse.y, 0));
+}
+void moveAZ(){
+  if(!changeVec){changeVec = true; tmpA = Ax;  curMouse = new pt2d(mouseX,mouseY);}
+  Ax = P(tmpA, V(0, 0, mouseX-curMouse.x));
+}
+
 
 //print out how far from perfectly perpindicular the rectangle is
 void checkRect(){
