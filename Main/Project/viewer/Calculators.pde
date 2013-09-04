@@ -66,7 +66,10 @@ vec getNormalizedRectangleNorm(vec PA, vec PB, vec PC, vec PD){
 }
 
 float calcNewMethodError(){
-  return angle(U(planeNorm), V(N(Ix, Jx))) * 180.0 / PI;
+ // System.out.println(d(U(V(N(Ix, Jx))),U(planeNorm))/n(U(planeNorm))/n(U(V(N(Ix, Jx)))) + "  /  " + n(U(planeNorm)) + "  /  " + n(U(V(N(Ix, Jx)))));
+ // System.out.print("guess: ");   U(planeNorm).str();
+ // System.out.print("exact: "); U(V(N(Ix, Jx))).str();
+  return angle(U(planeNorm), U(V(N(Ix, Jx)))) * 180.0 / PI;
 }
 
 //=======================================================

@@ -17,7 +17,7 @@ Boolean showHelpText = false,
         showDrawing = true,
         showRect     = true, 
         showPicture = false,
-        showGuess = false;
+        showGuess = false,
         showCrossMethod = true;
         
 Boolean moveBP = false;        
@@ -173,23 +173,27 @@ void draw() {
     // draw real 3D rectangle
     fill(grey); stroke(yellow); drawRectangle(Ar,Br,Cr,Dr);        
     // draw actual points, image points and guess points and the line that passes through all of them
-    fill(dred); stroke(dred);       show(f, Ar); show(f, Ai); show(f, Ap); show(Ap, 10); show(Ap, "A'", V(10,10,0));
-    fill(dblue); stroke(dblue);     show(f, Br); show(f, Bi); show(f, Bp); show(Bp, 10); show(Bp, "B'", V(10,10,0));
-    fill(dgreen); stroke(dgreen);   show(f, Cr); show(f, Ci); show(f, Cp); show(Cr, 10); show(Cp, "C'", V(10,10,0));
-    fill(dyellow); stroke(dyellow); show(f, Dr); show(f, Di); show(f, Dp); show(Dp, 10); show(Dp, "D'", V(10,10,0));       
+    fill(dred); stroke(dred);       show(f, Ar); show(f, Ai); show(Ai, "A", V(-25,-15,0));
+    fill(dblue); stroke(dblue);     show(f, Br); show(f, Bi); show(Bi, "B", V(15,-10,0));
+    fill(dgreen); stroke(dgreen);   show(f, Cr); show(f, Ci); show(Ci, "C", V(-25,25,0));
+    fill(dyellow); stroke(dyellow); show(f, Dr); show(f, Di); show(Di, "D", V(15,25,0));          
     // draw actual rectangle points
-   // fill(magenta); stroke(magenta); show(Ar, 10); show(Ar, "A", V(-30,-15,0)); show(Br, 10); show(Br, "B", V(15,-15,0));  show(Cr, 10); show(Cr, "C", V(-30,15,0)); show(Dr, 10); show(Dr, "D", V(15,15,0));         
+    // fill(magenta); stroke(magenta); show(Ar, 10); show(Ar, "A", V(-30,-15,0)); show(Br, 10); show(Br, "B", V(15,-15,0));  show(Cr, 10); show(Cr, "C", V(-30,15,0)); show(Dr, 10); show(Dr, "D", V(15,15,0));         
     // draw rectangle corner projections on image plane 
     fill(ddmagenta); stroke(ddmagenta); show(Ai, 10); show(Bi, 10); show(Ci, 10); show(Di, 10);   
+    fill(dcyan); stroke(dcyan); show(Ar, 10); show(Br, 10); show(Cr, 10); show(Dr, 10);   
     // draw guess rectangle for real rectangle
-   // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
+    // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
   }
    
   if(showCrossMethod){
     // draw plane norm
     fill(dyellow); stroke(dyellow);
     show(Orig, P(Orig, planeNorm));
-    show(P(Orig, planeNorm), 15);
+    show(P(Orig, planeNorm), 5);
+    fill(dred); stroke(dred);
+    show(Orig, P(Orig,  V(150,U(V(N(Ix, Jx))))));
+    show(P(Orig,  V(150,U(V(N(Ix, Jx))))), 5);
   } 
    
   // handles guessing and dragging guess rectangles
@@ -235,14 +239,9 @@ void draw() {
   // -------------------------------------------------------- DRAW PICTURE OVER EVERYTHING ------------------------------------
   
   // ON SCREEN TEXT
-  fill(dbrown); stroke(dbrown);
+  fill(dgreen); stroke(dgreen);
   if(showValueText){
-  scribeHeader((((-1.0*n2(V(Ap,Bp))+n2(V(Cp,Dp)))/n2(V(Ap,Bp)))*100) + 
-  "\nAB:" + (int)n2(V(Ap,Bp)) + 
-  "\nCD:" + (int)n2(V(Cp,Dp)) + 
-  "\nguess b: " + bpP+ 
-  "\nactual b: " + n(V(f,Br))/n(V(f,Bi)) + 
-  "\nsample search b: " + minB + 
+  scribeHeader(
   "\ntrapezoid scale: " + trapScale +   
   "\n A-red, B-blue, C-green, D-Yellow" + 
   "\n Norm Angle Error: " + calcNewMethodError());      
