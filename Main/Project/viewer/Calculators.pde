@@ -2,8 +2,7 @@
  * update guesses stuff after the real values change
  */
 void updateGs(){
-  calcGPrimes(bgP);
-  calcMinG(smpStart, smpEnd, samples, resamples);
+  calcGuessPlaneIntersection();
 }
 
 /*
@@ -60,17 +59,16 @@ vec getRectangleNorm(vec PA, vec PB, vec PC, vec PD){
 
 vec getNormalizedRectangleNorm(vec PA, vec PB, vec PC, vec PD){
   vec tmp1 = getRectangleNorm(PA, PB, PC, PD);
-  tmp1.str();
   vec tmp = V(200, U(tmp1));
-  tmp.str();
   return tmp;
 }
 
 float calcNewMethodError(){
- // System.out.println(d(U(V(N(Ix, Jx))),U(planeNorm))/n(U(planeNorm))/n(U(V(N(Ix, Jx)))) + "  /  " + n(U(planeNorm)) + "  /  " + n(U(V(N(Ix, Jx)))));
- // System.out.print("guess: ");   U(planeNorm).str();
- // System.out.print("exact: "); U(V(N(Ix, Jx))).str();
   return angle(U(planeNorm), U(V(N(Ix, Jx)))) * 180.0 / PI;
+}
+
+float calcNewMethodErrorGuess(){
+  return angle(U(planeNormGuess), U(V(N(Ix, Jx)))) * 180.0 / PI;
 }
 
 void calcPlaneIntersections(){
@@ -86,6 +84,22 @@ void calcPlaneIntersections(){
   Cp = P(f, V(Cs, C));
   float Ds = d(A,N)/d(D,N);
   Dp = P(f, V(Ds, D));
+}
+
+void calcGuessPlaneIntersection(){
+  planeNormGuess = U(getRectangleNorm(V(f, Ag), V(f, Bg), V(f, Cg), V(f, Dg)));
+  vec N = planeNormGuess;
+  vec A = V(f,Ag);
+  vec B = V(f,Bg);
+  vec C = V(f,Cg);
+  vec D = V(f,Dg);
+  Agp = Ai;
+  float Bs = d(A,N)/d(B,N);
+  Bgp = P(f, V(Bs, B));
+  float Cs = d(A,N)/d(C,N);
+  Cgp = P(f, V(Cs, C));
+  float Ds = d(A,N)/d(D,N);
+  Dgp = P(f, V(Ds, D));
 }
 
 //=======================================================

@@ -62,7 +62,7 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
   pt Ar = P(), Br = P(), Cr = P(), Dr = P();
   
   // normal plane vector
-  vec planeNorm = V();
+  vec planeNorm = V(), planeNormGuess = V(0,0,1);
   
   // A' B' C' D' (calculated rectangle point)   
   pt Ap = P(), Bp = P(), Cp = P(), Dp = P();
@@ -84,7 +84,7 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
   float agp = 1, bgP = 1.2, cgp = 0, dgp = 0;
   
   // scales one of the sides of the trapezoid
-  float trapScale = 1;
+  float trapScale = 0.8;
    
   // best guesses for b' value 
   float minB = -1;   float minG = -1;
@@ -205,6 +205,9 @@ void draw() {
     fill(dblue); stroke(dblue); show(f, Bp);
     fill(dgreen); stroke(dgreen); show(f, Cp);
     fill(dyellow); stroke(dyellow); show(f, Dp);      
+    
+    // draw prime rectangle
+    fill(magenta); stroke(magenta); drawRectangle(Ap,Bp,Cp,Dp);
   } 
    
   // handles guessing and dragging guess rectangles
@@ -222,12 +225,17 @@ void draw() {
   
   if(showGuess){
     // show 3D guess points
-    fill(white); stroke(orange); drawRectangle(Ag,Bg,Cg,Dg);        
-    stroke(orange); fill(orange); show(Ag, 10); show(Bg, 10); show(Cg, 10); show(Dg, 10); show(Gproj,10);      
+   // fill(white); stroke(orange); drawRectangle(Ag,Bg,Cg,Dg);        
+   // stroke(orange); fill(orange); show(Ag, 10); show(Bg, 10); show(Cg, 10); show(Dg, 10); show(Gproj,10);      
     // show rectangle formed by guess on 3D guess points
-    fill(magenta); stroke(magenta); drawRectangle(Agp,Bgp,Cgp,Dgp);        
+    fill(white); stroke(orange); drawRectangle(Agp,Bgp,Cgp,Dgp);        
     // if picture isnt showing show orange ball on mouse cursor
-    if(!showPicture){ fill(orange); stroke(orange); mousepick = Pick(); show(mousepick, 10); }  
+    if(!showPicture){ fill(orange); stroke(orange); mousepick = Pick(); show(mousepick, 10); }
+    //show guess plane norm
+    fill(dorange); stroke(dorange);
+    show(Ax, P(Ax,  V(175,U(planeNormGuess))));
+    show(P(Ax,  V(175,U(planeNormGuess))),5);
+    
   }  
   
   // -------------------------------------------------------- graphic picking on surface and view control ----------------------------------   
@@ -255,7 +263,8 @@ void draw() {
   scribeHeader(
   "\ntrapezoid scale: " + trapScale +   
   "\n A-red, B-blue, C-green, D-Yellow" + 
-  "\n Norm Angle Error: " + calcNewMethodError());      
+  "\n Exact Norm Angle Error: " + calcNewMethodError() +       
+  "\n Guess Norm Angle Error: " + calcNewMethodErrorGuess());      
   }
   
   // DRAW GRAPH
