@@ -6,7 +6,9 @@ GL gl;
 GLU glu; 
 
 // ****************************** GLOBAL VARIABLEyeS FOR DISPLAY OPTIONS *********************************
-int height=800, width=800;
+//int width=800, height=(int)((2448.0/3264.0)*width);
+int width=1040, height=780;
+//int width=2000, height=800;
 
 int ERROR_MODE = 1;
 
@@ -56,7 +58,7 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
   pt Ai = P(), Bi = P(), Ci = P(), Di = P();
   
   // rectangle defined by point Ax and side vectors Ix, Jx
-  pt Ax = P(); vec Ix = V(400,0,0); vec Jx = V(0,400,0);  
+  pt Ax = P(); vec Ix = V(520,0,0); vec Jx = V(0,520,0);  
 
   // uses above rectangle definition to define real 3d rectangle coordinates
   pt Ar = P(), Br = P(), Cr = P(), Dr = P();
@@ -107,7 +109,7 @@ void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
 
 
 void setup() {
-  size(800, 800, OPENGL); //  size(800, 800, P3D);    
+  size(width, height, OPENGL); //  size(800, 800, P3D);    
   setColors(); sphereDetail(6);  PFont font = loadFont("GillSans-24.vlw"); textFont(font, 20);  // font for writing labels on //  PFont font = loadFont("Courier-14.vlw"); textFont(font, 12); 
   // ***************** OpenGL and View setup
   glu= ((PGraphicsOpenGL) g).glu;  PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;  gl = pgl.beginGL();  pgl.endGL();
@@ -118,12 +120,13 @@ void setup() {
 
   // ------------------------------------------------------------------------------
   // LOAD IMAGE
-  //  picture = loadImage("data/roomPic.JPG"); 
-  //picture = loadImage("data/tennis.jpg");   
-  //  picture = loadImage("data/table1.jpgP");   
-    picture = loadImage("data/rug.jpg"); 
-  //    picture = loadImage("data/table2.JPG"); 
-  //  picture = loadImage("data/checkers.jpg");   
+  // picture = loadImage("data/roomPic.JPG"); 
+  // picture = loadImage("data/tennis.jpg");   
+  // picture = loadImage("data/table1.jpgP");   
+  // picture = loadImage("data/rug.jpg"); 
+  // picture = loadImage("data/table2.JPG"); 
+  //picture = loadImage("PICTURES/checkers1.JPG");   
+   picture = loadImage("PICTURES/checkers2.JPG");   
 
   // -------------------------------------------------------------------------------
   // CALCULAGE INITIAL VALUES
@@ -144,12 +147,14 @@ void setup() {
 void draw() {  
   
   background(white);
-  // -------------------------------------------------------- IMAGE STUFF ----------------------------------
+  // -------------------------------------------------------- 2D / IMAGE STUFF ----------------------------------
     if(showPicture){
-      image(picture, 0,0, picture.width*width/picture.width,picture.height * width/picture.width); 
-      stroke(red); fill(blue);    show(ag, 5); stroke(blue); fill(blue);   show(bg, 5);
-      stroke(green); fill(blue);  show(cg, 5); stroke(yellow); fill(blue); show(dg, 5);      
-      stroke(black); fill(blue);  show(gg, 5);            
+      image(picture, 0,0, picture.width*(float)width/picture.width,picture.height * (float)width/picture.width); 
+// image(picture, 0,0, picture.width/5,picture.height /5); 
+      noFill();
+      stroke(red);   show(ag, 5); stroke(blue);  show(bg, 5);
+      stroke(green); show(cg, 5); stroke(yellow); show(dg, 5);      
+      stroke(black); show(gg, 5);            
     }
      
   // -------------------------------------------------------- Help ----------------------------------
@@ -262,9 +267,11 @@ void draw() {
   if(showValueText){
   scribeHeader(
   "\ntrapezoid scale: " + trapScale +   
-  "\n A-red, B-blue, C-green, D-Yellow" + 
-  "\n Exact Norm Angle Error: " + calcNewMethodError() +       
-  "\n Guess Norm Angle Error: " + calcNewMethodErrorGuess());      
+  "\nA-red, B-blue, C-green, D-Yellow" + 
+  "\nExact Norm Angle Error: " + calcNewMethodError() +       
+  "\nGuess Norm Angle Error: " + calcNewMethodErrorGuess() + 
+  "\nRectangle Coords: " + printRectCoords() +
+  "\nRectangle Squares: " +   printRectCoordsSquare());
   }
   
   // DRAW GRAPH
@@ -459,9 +466,17 @@ void checkRect(){
   System.out.println(d(U(Ix),U(Jx)));
 }
 
+String printRectCoords(){
+  float x = d(U(V(Agp, Bgp)), V(Agp,Gproj))/n(V(Agp, Bgp));  
+  float y = d(U(V(Agp, Cgp)), V(Agp,Gproj))/n(V(Agp, Cgp));  //CHANGE TO Bgp FOR TRAP TODO FIX
+  return ("("+x+","+y+")");
+}
   
-  
-  
+String printRectCoordsSquare(){
+  float x = d(U(V(Agp, Bgp)), V(Agp,Gproj))/n(V(Agp, Bgp));  
+  float y = d(U(V(Agp, Cgp)), V(Agp,Gproj))/n(V(Agp, Cgp));  //CHANGE TO Bgp FOR TRAP TODO FIX
+  return ("("+(x*8.0)+","+(y*8.0)+")");
+}
   
   
   

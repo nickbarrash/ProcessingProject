@@ -84,6 +84,7 @@ void calcPlaneIntersections(){
   Cp = P(f, V(Cs, C));
   float Ds = d(A,N)/d(D,N);
   Dp = P(f, V(Ds, D));
+  calcGProj();
 }
 
 void calcGuessPlaneIntersection(){
@@ -93,7 +94,7 @@ void calcGuessPlaneIntersection(){
   vec B = V(f,Bg);
   vec C = V(f,Cg);
   vec D = V(f,Dg);
-  Agp = Ai;
+  Agp = Ag;
   float Bs = d(A,N)/d(B,N);
   Bgp = P(f, V(Bs, B));
   float Cs = d(A,N)/d(C,N);

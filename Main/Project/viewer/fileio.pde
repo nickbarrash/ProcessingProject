@@ -98,12 +98,6 @@ void printGridError(float samplesX, float samplesY, float largestX, float larges
   }
 }
 
-void printRectCoords(){
-  float x = d(U(V(Agp, Bgp)), V(Agp,Gproj))/n(V(Agp, Bgp));  
-  float y = d(U(V(Agp, Cgp)), V(Agp,Gproj))/n(V(Agp, Bgp));  //CHANGE TO Bgp FOR TRAP TODO FIX
-  println("("+x+","+y+")");
-}
-
 float getXCoordsDiff(float actx){
   float x = d(U(V(Agp, Bgp)), V(Agp,Gproj))/n(V(Agp, Bgp));
   return abs((actx - x));

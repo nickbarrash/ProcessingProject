@@ -11,7 +11,7 @@ void writeHelp () {fill(dblue);
 void writeFooterHelp () {fill(dbrown);
     scribeFooter("Nick Barrash ?:help",1);
   }
-void scribeHeader(String S) {text(S,500,30);} // writes on screen at line i
+void scribeHeader(String S) {text(S,10,0);} // writes on screen at line i
 void scribeHeaderRight(String S) {text(S,width-S.length()*15,20);} // writes on screen at line i
 void scribeFooter(String S) {text(S,10,height-10);} // writes on screen at line i
 void scribeFooter(String S, int i) {text(S,10,height-10-i*20);} // writes on screen at line i from bottom
