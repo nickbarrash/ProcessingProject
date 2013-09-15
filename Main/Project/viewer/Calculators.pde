@@ -63,6 +63,10 @@ vec getNormalizedRectangleNorm(vec PA, vec PB, vec PC, vec PD){
   return tmp;
 }
 
+float calcNewMethodError(vec guessVec){
+  return angle(U(guessVec), U(V(N(Ix, Jx)))) * 180.0 / PI;
+}
+
 float calcNewMethodError(){
   return angle(U(planeNorm), U(V(N(Ix, Jx)))) * 180.0 / PI;
 }
@@ -85,6 +89,29 @@ void calcPlaneIntersections(){
   float Ds = d(A,N)/d(D,N);
   Dp = P(f, V(Ds, D));
   calcGProj();
+}
+
+vec calcNormalVector(pt tmpAg, pt tmpBg, pt tmpCg, pt tmpDg){
+  pt[] corners = calcAnyPlaneIntersect(tmpAg, tmpBg, tmpCg, tmpDg);
+  return getRectangleNorm( V(f, tmpAg), V(f, tmpBg), V(f, tmpCg), V(f, tmpDg) );
+}
+
+pt[] calcAnyPlaneIntersect(pt tmpAg, pt tmpBg, pt tmpCg, pt tmpDg){
+  planeNormGuess = U(getRectangleNorm(V(f, tmpAg), V(f, tmpBg), V(f, tmpCg), V(f, tmpDg)));
+  vec N = planeNormGuess;
+  vec A = V(f,tmpAg);
+  vec B = V(f,tmpBg);
+  vec C = V(f,tmpCg);
+  vec D = V(f,tmpDg);
+  pt[] corners = new pt[4];
+  corners[0] = Ag;
+  float Bs = d(A,N)/d(B,N);
+  corners[1] = P(f, V(Bs, B));
+  float Cs = d(A,N)/d(C,N);
+  corners[2] = P(f, V(Cs, C));
+  float Ds = d(A,N)/d(D,N);
+  corners[3] = P(f, V(Ds, D));
+  return corners;
 }
 
 void calcGuessPlaneIntersection(){

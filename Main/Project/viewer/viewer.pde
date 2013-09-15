@@ -21,7 +21,13 @@ Boolean showHelpText = false,
         showPicture = false,
         showGuess = false,
         showCrossMethod = true,
-        showImagePlane = false;
+        showImagePlane = false,
+        showErrorPointPickMode = false,
+        showMagGlass = true, calcMagGlass = true,
+        showRectanglePoints = true;
+        
+        
+        pt[] errorCornerPicks = new pt[40];
         
 Boolean moveBP = false;        
         
@@ -50,6 +56,7 @@ void initViewY() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
 void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); E = P(1000,0,0); U=V(0,1,0); } // declares the local frames
 // ******************************************************************************************************************* 
 
+  int pickedPoints = 0;
   
   //focal point and a point on the image plane
   pt f = P(0,0,focalLen);  pt img = P(); pt Orig = P();
@@ -179,7 +186,7 @@ void draw() {
   
   if(showDrawing){
     // draw real 3D rectangle
-    fill(grey); stroke(yellow); drawRectangle(Ar,Br,Cr,Dr);        
+    fill(grey); stroke(black); drawRectangle(Ar,Br,Cr,Dr);        
     // draw actual points, image points and guess points and the line that passes through all of them
     fill(dred); stroke(dred);       show(f, Ar); show(f, Ai); show(Ai, "A", V(-25,-15,0));
     fill(dblue); stroke(dblue);     show(f, Br); show(f, Bi); show(Bi, "B", V(15,-10,0));
@@ -188,36 +195,40 @@ void draw() {
     // draw actual rectangle points
     // fill(magenta); stroke(magenta); show(Ar, 10); show(Ar, "A", V(-30,-15,0)); show(Br, 10); show(Br, "B", V(15,-15,0));  show(Cr, 10); show(Cr, "C", V(-30,15,0)); show(Dr, 10); show(Dr, "D", V(15,15,0));         
     // draw rectangle corner projections on image plane 
-    fill(ddmagenta); stroke(ddmagenta); show(Ai, 10); show(Bi, 10); show(Ci, 10); show(Di, 10);   
-    fill(dcyan); stroke(dcyan); show(Ar, 10); show(Br, 10); show(Cr, 10); show(Dr, 10);   
+    if(showRectanglePoints){
+        fill(ddmagenta); stroke(ddmagenta); show(Ai, 10); show(Bi, 10); show(Ci, 10); show(Di, 10);   
+        fill(dcyan); stroke(dcyan); show(Ar, 10); show(Br, 10); show(Cr, 10); show(Dr, 10);   
+    }
     // draw guess rectangle for real rectangle
     // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
   }
    
   if(showCrossMethod){
-    // draw plane norm
-    fill(dyellow); stroke(dyellow);
-    show(Ax, P(Ax, planeNorm));
-    show(P(Ax, planeNorm), 5);
-    fill(dred); stroke(dred);
-    show(Ax, P(Ax,  V(150,U(V(N(Ix, Jx))))));
-    show(P(Ax,  V(150,U(V(N(Ix, Jx))))), 5);
-    
-    // draw prime points
-    fill(magenta); stroke(magenta);
-    show(Ap, 15); show(Bp, 15); show(Cp, 15); show(Dp, 15);
+    if(showRectanglePoints){
+      // draw plane norm
+      fill(dyellow); stroke(dyellow);
+      show(Ax, P(Ax, planeNorm));
+      show(P(Ax, planeNorm), 5);
+      fill(dred); stroke(dred);
+      show(Ax, P(Ax,  V(150,U(V(N(Ix, Jx))))));
+      show(P(Ax,  V(150,U(V(N(Ix, Jx))))), 5);
+      
+      // draw prime points
+      fill(magenta); stroke(magenta);
+      show(Ap, 15); show(Bp, 15); show(Cp, 15); show(Dp, 15);
+    }
     fill(dred); stroke(dred); show(f, Ap);
     fill(dblue); stroke(dblue); show(f, Bp);
     fill(dgreen); stroke(dgreen); show(f, Cp);
     fill(dyellow); stroke(dyellow); show(f, Dp);      
     
     // draw prime rectangle
-    fill(magenta); stroke(magenta); drawRectangle(Ap,Bp,Cp,Dp);
+    //fill(magenta); stroke(magenta); drawRectangle(Ap,Bp,Cp,Dp);
   } 
    
   // handles guessing and dragging guess rectangles
   if(keyPressed){
-    if(key=='1') {Ag = P(f,helpIs(Pick())); ag = new pt2d(mouseX,mouseY); updateGs();}
+    if(key=='1') {Ag = P(f,helpIs(Pick())); /*ag = new pt2d(mouseX,mouseY);*/ updateGs();}
     if(key=='2') {Bg = P(f,helpIs(Pick())); bg = new pt2d(mouseX,mouseY); updateGs();} 
     if(key=='3') {Cg = P(f,helpIs(Pick())); cg = new pt2d(mouseX,mouseY); updateGs();} 
     if(key=='4') {Dg = P(f,helpIs(Pick())); dg = new pt2d(mouseX,mouseY); updateGs();}  
@@ -246,7 +257,7 @@ void draw() {
   // -------------------------------------------------------- graphic picking on surface and view control ----------------------------------   
   SetFrame(Q,I,J,K);  // showFrame(Q,I,J,K,30);  // sets frame from picked points and screen axes
   // rotate view 
-  if(!keyPressed&&mousePressed) {E=R(E,  PI*float(mouseX-pmouseX)/width,I,K,F); E=R(E,-PI*float(mouseY-pmouseY)/width,J,K,F); } // rotate E around F 
+  if(!keyPressed&&mousePressed&&!showErrorPointPickMode) {E=R(E,  PI*float(mouseX-pmouseX)/width,I,K,F); E=R(E,-PI*float(mouseY-pmouseY)/width,J,K,F); } // rotate E around F 
   if(keyPressed&&key=='D'&&mousePressed) {E=P(E,-float(mouseY-pmouseY),K); }  //   Moves E forward/backward
   if(keyPressed&&key=='t'){vec2d movePt = V2D(curMouse, new pt2d(mouseX,mouseY));}
   
@@ -274,9 +285,27 @@ void draw() {
   "\nRectangle Squares: " +   printRectCoordsSquare());
   }
   
+  if(showErrorPointPickMode){
+    if(pickedPoints%4 == 0){
+      scribeAtMouse("    pick A (" + (errorCornerPicks.length - pickedPoints)+")");
+    }
+    if(pickedPoints%4 == 1){
+      scribeAtMouse("    pick B (" + (errorCornerPicks.length - pickedPoints)+")");
+    }
+    if(pickedPoints%4 == 2){
+      scribeAtMouse("    pick C (" + (errorCornerPicks.length - pickedPoints)+")");
+    }
+    if(pickedPoints%4 == 3){
+      scribeAtMouse("    pick D (" + (errorCornerPicks.length - pickedPoints)+")");
+    }
+  }
   // DRAW GRAPH
   if(showGraph){
     drawGraph();
+  }
+  
+  if(showMagGlass){
+    showMagnifyingGlass();
   }
 }
  
@@ -309,6 +338,14 @@ void mouseDragged() {
 void mouseReleased() {
     U.set(M(J)); // reset camera up vector
     pressed = false;
+    if(showErrorPointPickMode){
+      errorCornerPicks[pickedPoints] = P(f,helpIs(Pick()));
+      pickedPoints++;
+    }
+    if(pickedPoints == errorCornerPicks.length){
+      showErrorPointPickMode = false;
+      calcMinMaxErrors();
+    }
   }
   
 void keyReleased() {
@@ -318,106 +355,6 @@ void keyReleased() {
    pre = false;
    if(changeVec) changeVec = false; 
    }
-
-void keyPressed() {
-  if(key=='b') {}
-  if(key=='e') {writeExactCheckersError(5,5,1,1);}
-  if(key=='f') {showValueText = !showValueText;}
-  if(key=='g') {showGraph = !showGraph;}
-  if(key=='h') {showDrawing = !showDrawing;}
-  if(key=='i') {initViewX();}  // snap view to specific profile
-  if(key=='j') {initViewY();}  // snap view to specific profile
-  if(key=='k') {initViewZ();}  // snap view to specific profile
-  if(key=='l') {}
-  if(key=='m') {}
-  if(key=='n') {}
-  if(key=='o') {}
-  if(key=='p') {}
-  if(key=='q') {}
-  if(key=='r') {writePerturbError(5, 5, 1, 1, 100, 5);}
-  if(key=='t') {}//trapezoid change 
-  if(key=='u') {bpP = minB;}  // snap guess rectangle to "best" value
-  if(key=='w') {}
-  if(key=='y') {}
-  
-  if(key=='a') {moveAX(); calcVals();}
-  if(key=='s') {moveAY(); calcVals();}
-  if(key=='d') {moveAZ(); calcVals();} 
-  
-  if(key=='v') {moveVecJxz(); calcVals();}  // drag real rectangle vertex
-  if(key=='c') {moveVecJxy(); calcVals();}  // drag real rectangle vertex
-  if(key=='x') {moveVecIxz(); calcVals();} // drag real rectangle vertex
-  if(key=='z') {moveVecIxy(); calcVals();} // drag real rectangle vertex
-   
-  if(key=='A') {}
-  if(key=='B') {}
-  if(key=='C') {}
-  if(key=='D') {}
-  if(key=='E') {println(calcError2(Ai,Bi,Ci,Di, bpP,1));}
-  if(key=='F') {}
-  if(key=='G') {showGuess = !showGuess;}
-  if(key=='H') {}
-  if(key=='I') {showImagePlane = !showImagePlane;}
-  if(key=='J') {}
-  if(key=='K') {}
-  if(key=='L') {}
-  if(key=='M') {}
-  if(key=='N') {}
-  if(key=='O') {}
-  if(key=='P') {showPicture = !showPicture;}
-  if(key=='Q') {exit();}
-  if(key=='R') {}
-  if(key=='S') {calcMinG(smpStart, smpEnd, samples, resamples); calcGPrimes(minG); bgP = minG;}
-  if(key=='T') {}
-  if(key=='U') {}
-  if(key=='V') {} 
-  if(key=='W') {}
-  if(key=='X') {}
-  if(key=='Y') {}
-  if(key=='Z') {}
-
-  if(key=='~') {}
-  if(key=='!') {snapping=true;}
-  if(key=='@') {}
-  if(key=='#') {}
-  if(key=='$') {}
-  if(key=='%') {}
-  if(key=='&') {}
-  if(key=='*') {sampleDistance*=2;}
-  if(key=='(') {}
-  if(key==')') {}
-  if(key=='_') {}
-  if(key=='+') {}
-  if(key=='{') {}
-  if(key=='}') {}
-  if(key=='|') {}
-  if(key=='[') {}
-  if(key==']') {}
-  if(key==':') {}
-  if(key==';') {}
-  if(key=='<') {}
-  if(key=='>') {}
-  if(key=='?') {showHelpText=!showHelpText;}
-  if(key=='.') {}
-  if(key==',') {}
-  if(key=='^') {} 
-  if(key=='/') {} 
-
-  if(key=='~') {}  
-  if(key=='`') {}  
-  if(key=='1') {/*switchErrorMode();*/}  // switch to error mode
-  if(key=='2') {} 
-  if(key=='3') {} 
-  if(key=='4') {} 
-  if(key=='5') {}
-  if(key=='6') {} 
-  if(key=='7') {} 
-  if(key=='8') {} 
-  if(key=='9') {}     
-  if(key=='0') {}
-  if(key=='-') {}
-  if(key=='=') {}  
-}
   
 // PROGRAM STATES
 // ERROR_MODE
@@ -478,6 +415,32 @@ String printRectCoordsSquare(){
   return ("("+(x*8.0)+","+(y*8.0)+")");
 }
   
+void doErrorStuff(){
+  showErrorPointPickMode = true;
+  pickedPoints = 0;
+  errorCornerPicks = new pt[40];
+}
+
+void calcMinMaxErrors(){
+  float largestAngle = -1;
+  float smallestAngle = 361;
+  for(int i = 0; i < 10; i++){
+    for(int j = 0; j < 10; j++){
+      for(int k = 0; k < 10; k++){
+        for(int l = 0; l < 10; l++){
+          vec tmpNorm = calcNormalVector(errorCornerPicks[i*4], errorCornerPicks[j*4+1], errorCornerPicks[k*4+2], errorCornerPicks[l*4+3]);
+          float tmpAngle = calcNewMethodError(tmpNorm);
+          largestAngle = tmpAngle > largestAngle ? tmpAngle : largestAngle;
+          smallestAngle = tmpAngle < smallestAngle ? tmpAngle : smallestAngle;
+        }
+      }
+    }
+  }
+  largestAngle = largestAngle > 90 ? abs(180 - largestAngle) : largestAngle;
+  smallestAngle = smallestAngle > 90 ? abs(180 - smallestAngle) : smallestAngle;
+  System.out.println(largestAngle + " " + smallestAngle);
+}
+
   
   
 // Snapping PICTURES of the screen
