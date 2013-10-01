@@ -6,8 +6,8 @@ void updateMouseColor(){
 
     show(test, 20);*/
     
-int glassSize = 30;    
-int magnifyingFactor = 10;
+int glassSize = 50;    
+int magnifyingFactor = 5;
 color[][] magnifyingGlass = new color[glassSize][glassSize];
 
 public void showMagnifyingGlass(){
@@ -51,13 +51,7 @@ public void displayMagnifyingGlass(){
     }
   }
  // reticle
- for(int i = 0; i < glassSize-1; i++){
-    if(i == glassSize/2-4){
-      i+=3;
-    }
-    if(i == glassSize/2){
-      i+=3;
-    }
+ for(int i = (glassSize-1)/2; i <= (glassSize-1)/2; i++){
     for(int j = 0; j < magnifyingFactor; j++){
       for(int k = 0; k < magnifyingFactor; k++){
         pixels[(width - glassSize * magnifyingFactor + i * magnifyingFactor + j) + width * ((glassSize-1)/2 * magnifyingFactor + k)] = red;

@@ -16,7 +16,7 @@ void keyPressed() {
   if(key=='r') {writePerturbError(5, 5, 1, 1, 100, 5);}
   if(key=='t') {}//trapezoid change 
   if(key=='u') {bpP = minB;}  // snap guess rectangle to "best" value
-  if(key=='w') {}
+  if(key=='w') {println(mouseX + ", " + mouseY);}
   if(key=='y') {}
   
   if(key=='a') {moveAX(); calcVals();}

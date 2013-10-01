@@ -180,9 +180,9 @@ void draw() {
  
   // --------------------------------------------------------- DRAW 3D ---------------------------------------------------
   // draw image plane rectangle
-  if(showImagePlane){
-    fill(black, 80); stroke(black); drawRectangle(P(-2000,-2000,0),P(-2000,2000,0),P(2000,-2000,0),P(2000,2000,0));  
-  }  
+  //if(showImagePlane){
+    fill(white, 80); stroke(white); drawRectangle(P(-4000,-4000,0),P(-4000,4000,0),P(4000,-4000,0),P(4000,4000,0));  
+  //}  
   
   if(showDrawing){
     // draw real 3D rectangle
@@ -202,6 +202,7 @@ void draw() {
     // draw guess rectangle for real rectangle
     // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
   }
+
    
   if(showCrossMethod){
     if(showRectanglePoints){
@@ -303,6 +304,8 @@ void draw() {
   if(showGraph){
     drawGraph();
   }
+  
+   // scribeAtMouse("(" + mouseX + "," + mouseY + ")  /  (" + round(picking.x) + "," + round(picking.y) + "," + round(picking.z) + ") / (" + convert(picking.x, true) + "," + convert(picking.y, false) + ")");
   
   if(showMagGlass){
     showMagnifyingGlass();
