@@ -17,6 +17,25 @@ pt Pick() {
   ((PGraphicsOpenGL)g).endGL(); 
   return P((float)mousePosArr[0],(float)mousePosArr[1],(float)mousePosArr[2]);
   }
+  
+  
+  
+  pt Pick2(int mouseXX, int mouseYY) { 
+  ((PGraphicsOpenGL)g).beginGL(); 
+  int viewport[] = new int[4]; 
+  double[] proj=new double[16]; 
+  double[] model=new double[16]; 
+  gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0); 
+  gl.glGetDoublev(GL.GL_PROJECTION_MATRIX,proj,0); 
+  gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX,model,0); 
+  FloatBuffer fb=ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer(); 
+  gl.glReadPixels(mouseXX, height-mouseYY, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT, fb); 
+  fb.rewind(); 
+  double[] mousePosArr=new double[4]; 
+  glu.gluUnProject((double)mouseXX,height-(double)mouseYY,(double)fb.get(0), model,0,proj,0,viewport,0,mousePosArr,0); 
+  ((PGraphicsOpenGL)g).endGL(); 
+  return P((float)mousePosArr[0],(float)mousePosArr[1],(float)mousePosArr[2]);
+  }
 
 // sets Q where the mouse points to and I, J, K to be aligned with the screen (I right, J up, K towards thre viewer)
 void SetFrame(pt Q, vec I, vec J, vec K) { 

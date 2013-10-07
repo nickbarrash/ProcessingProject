@@ -91,8 +91,8 @@ void keyPressed() {
   if(key=='5') {}
   if(key=='6') {} 
   if(key=='7') {} 
-  if(key=='8') {} 
-  if(key=='9') {}     
+  if(key=='8') {monteCarlo = true;} 
+  if(key=='9') {calcAverageError(2);}     
   if(key=='0') {}
   if(key=='-') {}
   if(key=='=') {}  

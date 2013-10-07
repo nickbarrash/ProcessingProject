@@ -24,7 +24,8 @@ Boolean showHelpText = false,
         showImagePlane = false,
         showErrorPointPickMode = false,
         showMagGlass = true, calcMagGlass = true,
-        showRectanglePoints = true;
+        showRectanglePoints = true,
+        monteCarlo = false;
         
         
         pt[] errorCornerPicks = new pt[40];
@@ -55,6 +56,8 @@ void initViewZ() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); 
 void initViewY() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); E = P(0,1000,0); U=V(0,0,1); } // declares the local frames
 void initViewX() {Q=P(0,0,0); I=V(1,0,0); J=V(0,1,0); K=V(0,0,1); F = P(0,0,0); E = P(1000,0,0); U=V(0,1,0); } // declares the local frames
 // ******************************************************************************************************************* 
+
+ pt testA = P(); pt testB = P(); pt testC = P(); pt testD  = P();
 
   int pickedPoints = 0;
   
@@ -181,7 +184,11 @@ void draw() {
   // --------------------------------------------------------- DRAW 3D ---------------------------------------------------
   // draw image plane rectangle
   //if(showImagePlane){
-    fill(white, 80); stroke(white); drawRectangle(P(-4000,-4000,0),P(-4000,4000,0),P(4000,-4000,0),P(4000,4000,0));  
+    if(monteCarlo){
+      fill(white, 80); stroke(white); drawRectangle(P(-4000,-4000,0),P(-4000,4000,0),P(4000,-4000,0),P(4000,4000,0));  
+      monteCarloAvgError(4, 1000);
+      monteCarlo = false;
+    }
   //}  
   
   if(showDrawing){
@@ -202,8 +209,10 @@ void draw() {
     // draw guess rectangle for real rectangle
     // fill(cyan); stroke(cyan); drawRectangle(Ap,Bp,Cp,Dp);
   }
+  fill(green); stroke(green);
+  //testA.str();
+  show(testA, 10);   show(testB, 10);   show(testC, 10);   show(testD, 10);
 
-   
   if(showCrossMethod){
     if(showRectanglePoints){
       // draw plane norm
@@ -304,9 +313,13 @@ void draw() {
   if(showGraph){
     drawGraph();
   }
-  
-   // scribeAtMouse("(" + mouseX + "," + mouseY + ")  /  (" + round(picking.x) + "," + round(picking.y) + "," + round(picking.z) + ") / (" + convert(picking.x, true) + "," + convert(picking.y, false) + ")");
-  
+    //pt picking = P(f,helpIs(Pick()));
+    //pt picking2 = P(f,helpIs(Pick2(convertX(picking), convertY(picking))));
+    //int Aix = convertX(Ai);
+    //int Aiy = convertY(Ai);    
+    //pt picking3 = P(f,helpIs(Pick2(Aix, Aiy)));
+    //scribeAt("(" + mouseX + "," + mouseY + ")  /  (" + round(picking.x) + "," + round(picking.y) + "," + round(picking.z) + ") / (" + convertX(picking) + "," + convertY(picking) + ") / (" + round(picking2.x) + "," + round(picking2.y) + "," + round(picking2.z) + ")", 300, 200);
+    //988scribeAt("(" + round(Ai.x) + "," + round(Ai.y) + "," + round(Ai.z) + ") / (" + Aix + "," + Aiy + ") / (" + round(picking3.x) + "," + round(picking3.y) + "," + round(picking3.z) + ")", 300, 220);
   if(showMagGlass){
     showMagnifyingGlass();
   }
